@@ -16,21 +16,27 @@
 using namespace std;
 
 struct TreeNode{
-    int value;
-    int parent;
-    set<int> child;
-    TreeNode(): value(0), parent(-1){}
+    long value;
+    long parent;
+    set<long> child;
+    TreeNode() : value(0), parent(-1){}
 };
 
 class Tree{
     vector<TreeNode> tree;
     
 public:
-    Tree(int N){
+    Tree(long N){
         tree.resize(N, TreeNode());
         tree[0].parent = 0;
     }
-    bool buildTree(int x, int y){
+    
+    void quickAdd(long parent, long child){
+        tree[parent].child.insert(child);
+        tree[child].parent = parent;
+    }
+    
+    bool buildTree(long x, long y){
         if (tree[x].parent != -1){
             assert(tree[y].parent == -1);
             tree[x].child.insert(y);
@@ -44,15 +50,15 @@ public:
         }
         return false;
     }
-    void addValue(int x, int value){
+    void addValue(long x, long value){
         tree[x].value += value;
     }
-    int findLowestCommonParent(int x, int y){
+    long findLowestCommonParent(long x, long y){
         if (x == y){
             return x;
         }
-        int x_curr = x, y_curr = y;
-        set<int> xparent, yparent;
+        long x_curr = x, y_curr = y;
+        set<long> xparent, yparent;
         xparent.insert(x_curr);
         yparent.insert(y_curr);
         while (x_curr != 0 || y_curr != 0){
@@ -73,11 +79,11 @@ public:
         }
         return 0;
     }
-    long getSubMax(int child, int parent){
+    long getSubMax(long child, long parent){
         if (child == parent)
             return 0;
-        int curr = child;
-        vector<int> stack;
+        long curr = child;
+        vector<long> stack;
         while (curr != parent){
             stack.push_back(curr);
             curr = tree[curr].parent;
@@ -91,19 +97,19 @@ public:
         }
         return max;
     }
-    long getBaseValue(int x){
-        vector<int> stack;
-        int sum = tree[x].value;
-        int curr = x;
+    long getBaseValue(long x){
+        vector<long> stack;
+        long sum = tree[x].value;
+        long curr = x;
         while (curr != 0){
             curr = tree[curr].parent;
             sum += tree[curr].value;
         }
         return sum;
     }
-    vector<int> goToTop(int x){
-        int curr = x;
-        vector<int> list;
+    vector<long> goToTop(long x){
+        long curr = x;
+        vector<long> list;
         while (curr != 0) {
             list.push_back(curr);
             curr = tree[curr].parent;
@@ -111,27 +117,29 @@ public:
         list.push_back(curr);
         return list;
     }
-    long getMaxValue(int x, int y){
-        vector<int> path1 = goToTop(x);
-        vector<int> path2 = goToTop(y);
-        int v1 = path1.back();
-        int v2 = path2.back();
+    long getMaxValue(long x, long y){
+        vector<long> path1 = goToTop(x);
+        vector<long> path2 = goToTop(y);
+        long v1 = path1.back();
+        long v2 = path2.back();
         path1.pop_back();
         path2.pop_back();
         long sum = 0;
-        bool tag1=true, tag2=true;
+        bool tag1 = true, tag2 = true;
         while (v1 == v2) {
             sum += tree[v1].value;
             if (!path1.empty()) {
                 v1 = path1.back();
                 path1.pop_back();
-            }else{
+            }
+            else{
                 tag1 = false;
             }
             if (!path2.empty()) {
                 v2 = path2.back();
                 path2.pop_back();
-            }else{
+            }
+            else{
                 tag2 = false;
             }
             if (!tag1 || !tag2) {
@@ -154,7 +162,7 @@ public:
         long max2 = 0;
         if (tag2) {
             long sum2 = tree[v2].value;
-            max2 = sum2 > 0 ?sum2 : 0;
+            max2 = sum2 > 0 ? sum2 : 0;
             while (!path2.empty()) {
                 v2 = path2.back();
                 sum2 += tree[v2].value;
@@ -169,7 +177,30 @@ public:
     }
 };
 
-inline void remove(multimap<int, int> &repository, int x, int y){
+class Graph{
+    vector<set<long>> graph;
+    
+public:
+    Graph(long N){
+        graph.resize(N, set<long>());
+    }
+    void addLine(long x, long y){
+        graph[x].insert(y);
+        graph[y].insert(x);
+    }
+    
+    void buildTree(Tree &tree, long x, long from){
+        for (long next : graph[x]){
+            if (next != from){
+                tree.quickAdd(x, next);
+                buildTree(tree, next, x);
+            }
+        }
+    }
+    
+};
+
+inline void remove(multimap<long, long> &repository, long x, long y){
     auto bound = repository.equal_range(x);
     for (auto iter = bound.first; iter != bound.second; iter++){
         if (iter->second == y){
@@ -179,7 +210,7 @@ inline void remove(multimap<int, int> &repository, int x, int y){
     }
 }
 
-void execute(Tree &tree, multimap<int, int> &repository, int x, int y){
+void execute(Tree &tree, multimap<long, long> &repository, long x, long y){
     bool tag = tree.buildTree(x - 1, y - 1);
     if (!tag){
         repository.insert(make_pair(x, y));
@@ -188,14 +219,14 @@ void execute(Tree &tree, multimap<int, int> &repository, int x, int y){
     }
     auto find = repository.find(x);
     if (find != repository.end()){
-        int tmp = find->second;
+        long tmp = find->second;
         remove(repository, x, tmp);
         remove(repository, tmp, x);
         execute(tree, repository, x, tmp);
     }
     find = repository.find(y);
     if (find != repository.end()){
-        int tmp = find->second;
+        long tmp = find->second;
         remove(repository, y, tmp);
         remove(repository, tmp, y);
         execute(tree, repository, y, tmp);
@@ -203,24 +234,27 @@ void execute(Tree &tree, multimap<int, int> &repository, int x, int y){
 }
 
 int main(){
-    int N, Q, x, y;
+    long N, Q, x, y;
     string command;
     cin >> N;
     Tree tree(N);
-    multimap <int, int> repository;
-    for (int i = 0; i < N-1; i++){
+    Graph graph(N);
+    //multimap <long, long> repository;
+    for (long i = 0; i < N - 1; i++){
         cin >> x >> y;
-        execute(tree, repository, x, y);
+        graph.addLine(x - 1, y - 1);
+        //execute(tree, repository, x, y);
     }
-    assert(repository.empty());
+    graph.buildTree(tree, 0, 0);
+    //assert(repository.empty());
     cin >> Q;
-    for (int i = 0; i < Q; i++){
+    for (long i = 0; i < Q; i++){
         cin >> command >> x >> y;
         if (command == "find"){
-            cout << tree.findLowestCommonParent(x-1, y-1) + 1 << endl;
+            cout << tree.findLowestCommonParent(x - 1, y - 1) + 1 << endl;
         }
         else if (command == "add"){
-            tree.addValue(x-1, y);
+            tree.addValue(x - 1, y);
         }
         else if (command == "sub"){
             cout << tree.getSubMax(x - 1, y - 1) << endl;
@@ -229,12 +263,12 @@ int main(){
             cout << tree.getBaseValue(x - 1) << endl;
         }
         else if (command == "max"){
-//            int base = tree.findLowestCommonParent(x - 1, y - 1);
-//            long left = tree.getSubMax(x - 1, base);
-//            long right = tree.getSubMax(y - 1, base);
-//            long tmp = left > right ? left : right;
-//            long bvalue = tree.getBaseValue(base);
-//            cout << tmp + bvalue << endl;
+            //            long base = tree.findLowestCommonParent(x - 1, y - 1);
+            //            long left = tree.getSubMax(x - 1, base);
+            //            long right = tree.getSubMax(y - 1, base);
+            //            long tmp = left > right ? left : right;
+            //            long bvalue = tree.getBaseValue(base);
+            //            cout << tmp + bvalue << endl;
             cout << tree.getMaxValue(x - 1, y - 1) << endl;
         }
     }
