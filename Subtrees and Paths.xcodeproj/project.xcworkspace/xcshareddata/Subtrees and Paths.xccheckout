@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>EA5B691B-83C8-4256-9CEA-1D9CD27587DC</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Subtrees and Paths</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3A910E691C76CBCD328D51D0A8BB90DA62F46370</key>
+		<string>https://github.com/yeyejyf/Subtrees-and-Paths.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Subtrees and Paths.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3A910E691C76CBCD328D51D0A8BB90DA62F46370</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/yeyejyf/Subtrees-and-Paths.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3A910E691C76CBCD328D51D0A8BB90DA62F46370</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3A910E691C76CBCD328D51D0A8BB90DA62F46370</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Subtrees%20and%20Paths</string>
+		</dict>
+	</array>
+</dict>
+</plist>
